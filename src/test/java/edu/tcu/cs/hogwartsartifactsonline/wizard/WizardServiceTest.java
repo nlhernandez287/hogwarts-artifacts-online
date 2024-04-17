@@ -102,7 +102,7 @@ public class WizardServiceTest {
         // Then
         assertThat(thrown)
                 .isInstanceOf(ObjectNotFoundException.class)
-                .hasMessage("Could not find wizard with Id 1:(");
+                .hasMessage("Could not find wizard with Id 1");
         verify(this.wizardRepository, times(1)).findById(1);
     }
 

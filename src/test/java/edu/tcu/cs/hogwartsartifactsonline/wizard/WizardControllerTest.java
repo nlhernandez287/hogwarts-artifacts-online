@@ -5,128 +5,71 @@ import edu.tcu.cs.hogwartsartifactsonline.artifact.Artifact;
 import edu.tcu.cs.hogwartsartifactsonline.system.StatusCode;
 import edu.tcu.cs.hogwartsartifactsonline.system.exception.ObjectNotFoundException;
 import edu.tcu.cs.hogwartsartifactsonline.wizard.dto.WizardDto;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static edu.tcu.cs.hogwartsartifactsonline.wizard.WizardUtils.generateWizard;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
+@ActiveProfiles("test")
 @SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureMockMvc
 class WizardControllerTest {
+
     @Autowired
     MockMvc mockMvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
 
     @MockBean
     WizardService wizardService;
 
-    List<Wizard> wizards;
+    @Value("${api.endpoint.base-url}/wizards")
+    String BASE_URL;
+
+    List<Wizard> wizards = new ArrayList<>();
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @BeforeEach
-    void setUp() throws Exception {
-        Artifact a1 = new Artifact();
-        a1.setId("1250808601744904191");
-        a1.setName("Deluminator");
-        a1.setDescription("A Deluminator is a device invented by Albus Dumbledore");
-        a1.setImageUrl("ImageUrl");
-
-        Artifact a2 = new Artifact();
-        a2.setId("1250808601744904192");
-        a2.setName("Invisibility Cloak");
-        a2.setDescription("An invisibility cloak is used to make th wearer invisible");
-        a2.setImageUrl("ImageUrl");
-
-        Artifact a3 = new Artifact();
-        a3.setId("1250808601744904193");
-        a3.setName("Elder Wand");
-        a3.setDescription("The Elder Wand, known throughout history as the Death");
-        a3.setImageUrl("ImageUrl");
-
-        Artifact a4 = new Artifact();
-        a4.setId("1250808601744904194");
-        a4.setName("The Marauder's Map");
-        a4.setDescription("A magical map of Hogwarts created by Remus Lupin");
-        a4.setImageUrl("ImageUrl");
-
-        Artifact a5 = new Artifact();
-        a5.setId("1250808601744904195");
-        a5.setName("The Sword of Gryffindor");
-        a5.setDescription("A goblin-made sword adorned with large rubies on the hilt.");
-        a5.setImageUrl("ImageUrl");
-
-        Artifact a6 = new Artifact();
-        a4.setId("1250808601744904196");
-        a4.setName("Resurrection Stone");
-        a4.setDescription("The Resurrection Stone allows the holder to bring back a person from the dead");
-        a4.setImageUrl("ImageUrl");
-
-        this.wizards = new ArrayList<>();
-
-        Wizard w1 = new Wizard();
-        w1.setId(1);
-        w1.setName("Albus Dumbledore");
-        w1.addArtifact(a1);
-        w1.addArtifact(a3);
-        this.wizards.add(w1);
-
-        Wizard w2 = new Wizard();
-        w2.setId(2);
-        w2.setName("Harry Potter");
-        w2.addArtifact(a2);
-        w2.addArtifact(a4);
-        this.wizards.add(w2);
-
-        Wizard w3 = new Wizard();
-        w3.setId(3);
-        w3.setName("Neville Longbottom");
-        w3.addArtifact(a5);
-        this.wizards.add(w3);
-
-
+    void setUp() {
+        wizards.addAll(List.of(
+                generateWizard(1, "Harry Potter"),
+                generateWizard(2, "Albus Dumbledore"),
+                generateWizard(3, "Hermione Granger")
+        ));
     }
 
     @AfterEach
-    void tearDown(){
+    void tearDown() {
     }
 
     @Test
-    void testFindAllWizardsSuccess() throws Exception {
-        // Given. Arrange inputs and targets. Define the behavior of Mock objects
-        given(this.wizardService.findAll()).willReturn(this.wizards);
+    void TestfindWizardByIdSuccess() throws Exception {
+        // Given
+        var wizard = generateWizard(1, "Harry Potter");
 
-        // When and then
-        this.mockMvc.perform(get("/api/v1/wizards").accept(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.flag").value(true))
-                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
-                .andExpect(jsonPath("$.message").value("Find one success"))
-                .andExpect(jsonPath("$.data.id").value(wizard.getId()))
-                .andExpect(jsonPath("$.data.name").value(wizard.getName()))
-                .andExpect(jsonPath("$.data.numberOfArtifacts").value(0));
-    }
+        when(this.wizardService.findById(wizard.getId()))
+                .thenReturn(wizard);
 
-    @Test
-    void testFindWizardByIdSuccess() throws Exception {
-        // Given. Arrange inputs and targets. Define the behavior of Mock objects
-        given(this.wizardService.findById(1)).willReturn(this.wizards.get(1));
-
-        this.mockMvc.perform(get("/api/v1/wizards").accept(MediaType.APPLICATION_JSON))
+        // When - Then
+        this.mockMvc.perform(get(BASE_URL + "/" + wizard.getId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Find one success"))
@@ -144,39 +87,174 @@ class WizardControllerTest {
 
         // When - Then
         this.mockMvc.perform(
-                        get("/api/v1/wizards").accept(MediaType.APPLICATION_JSON))
+                        get(BASE_URL + "/" + wizardId).accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.flag").value(false))
                 .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
-                .andExpect(jsonPath("$.message").value("Could not found Wizard with Id %d".formatted(wizardId)))
+                .andExpect(jsonPath("$.message").value("Could not find Wizard with Id %d".formatted(wizardId)))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
     @Test
-    void testAddWizardSuccess() throws Exception {
-        WizardDto wizardDto = new WizardDto(null, "Hermoine Granger", 0);
-
-        String json = this.objectMapper.writeValueAsString(wizardDto);
-
-        Wizard savedWizard = new Wizard();
-        savedWizard.setId(4);
-        savedWizard.setName("Hermoine Granger");
-
+    void testFindAllWizards() throws Exception {
         // Given
-        //given(this.wizardService.save(Mockito.any(Wizard.class))).willReturn
+        when(this.wizardService.findAll())
+                .thenReturn(wizards);
+
+        // When - Then
+        this.mockMvc.perform(get(BASE_URL).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Find all success"))
+                .andExpect(jsonPath("$.data", Matchers.hasSize(wizards.size())))
+                .andExpect(jsonPath("$.data[0].id").value(wizards.get(0).getId()))
+                .andExpect(jsonPath("$.data[0].name").value(wizards.get(0).getName()))
+                .andExpect(jsonPath("$.data[0].numberOfArtifacts").value(0));
     }
 
     @Test
-    void testUpdateWizardSuccess() throws Exception{
-        WizardDto wizardDto = new WizardDto(null, "Updated wizard name", 0);
-
-        Wizard updatedWizard = new Wizard();
-        updatedWizard.setId(1);
-        updatedWizard.setName("Updated wizard name");
-
-        String json = this.objectMapper.writeValueAsString(updatedWizard);
-
+    void testAddWizardSuccess() throws Exception {
         // Given
-        given(this.wizardService.update(eq(1), Mockito.any(Wizard.class)));
+        var wizardDto = new WizardDto(null,
+                "Harry Potter",
+                null);
+
+        var wizardDtoJson = objectMapper.writeValueAsString(wizardDto);
+
+        var savedWizard = wizards.get(0);
+
+        when(this.wizardService.save(any(Wizard.class)))
+                .thenReturn(savedWizard);
+
+        // When - Then
+        this.mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON).content(wizardDtoJson).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Add success"))
+                .andExpect(jsonPath("$.data.id").isNotEmpty())
+                .andExpect(jsonPath("$.data.name").value(savedWizard.getName()))
+                .andExpect(jsonPath("$.data.numberOfArtifacts").value(0));
+    }
+
+    @Test
+    void testAddWizardFaildWithEmptyProvidedName() throws Exception {
+        // Given
+        var wizardDto = new WizardDto(null,
+                "",
+                null);
+
+        var wizardDtoJson = objectMapper.writeValueAsString(wizardDto);
+
+        var savedWizard = wizards.get(0);
+
+        when(this.wizardService.save(any(Wizard.class)))
+                .thenReturn(savedWizard);
+
+        // When - Then
+        this.mockMvc.perform(post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON).content(wizardDtoJson).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(StatusCode.INVALID_ARGUMENT))
+                .andExpect(jsonPath("$.message").value("Provided arguments are invalid, see data for details"))
+                .andExpect(jsonPath("$.data.name").value("Name is required"));
+    }
+
+    @Test
+    void testUpdateWizardSuccess() throws Exception {
+        // Given
+        var wizardDto = new WizardDto(1, "Harry Potter Update", null);
+
+        var wizardDtoJson = objectMapper.writeValueAsString(wizardDto);
+
+        var updatedWizard = generateWizard(1, wizardDto.name());
+
+        when(this.wizardService.update(anyInt() , Mockito.any(Wizard.class)))
+                .thenReturn(updatedWizard);
+
+        // When - Then
+        this.mockMvc.perform(put(BASE_URL + "/" + wizardDto.id())
+                        .contentType(MediaType.APPLICATION_JSON).content(wizardDtoJson).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Update success"))
+                .andExpect(jsonPath("$.data.id").isNotEmpty())
+                .andExpect(jsonPath("$.data.name").value(updatedWizard.getName()))
+                .andExpect(jsonPath("$.data.numberOfArtifacts").value(0));
+    }
+
+    @Test
+    void testUpdateWizardNotFound() throws Exception {
+        // Given
+        var wizardDto = new WizardDto(1, "Harry Potter Update", null);
+
+        var wizardDtoJson = objectMapper.writeValueAsString(wizardDto);
+
+        var updatedWizard = generateWizard(1, wizardDto.name());
+
+        when(this.wizardService.update(anyInt() , Mockito.any(Wizard.class)))
+                .thenThrow(new ObjectNotFoundException(Wizard.class.getSimpleName() ,1));
+
+        // When - Then
+        this.mockMvc.perform(put(BASE_URL + "/" + wizardDto.id())
+                        .contentType(MediaType.APPLICATION_JSON).content(wizardDtoJson).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+                .andExpect(jsonPath("$.message").value("Could not find Wizard with Id %d".formatted(1)))
+                .andExpect(jsonPath("$.data").isEmpty());
+    }
+
+    @Test
+    void testUpdateWizardFaildWithEmptyProvidedName() throws Exception {
+        // Given
+        var wizardDto = new WizardDto(1, "", null);
+
+        var wizardDtoJson = objectMapper.writeValueAsString(wizardDto);
+
+        var updatedWizard = generateWizard(1, wizardDto.name());
+
+        when(this.wizardService.update(anyInt() , Mockito.any(Wizard.class)))
+                .thenReturn(updatedWizard);
+
+        // When - Then
+        this.mockMvc.perform(put(BASE_URL + "/" + wizardDto.id())
+                        .contentType(MediaType.APPLICATION_JSON).content(wizardDtoJson).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(StatusCode.INVALID_ARGUMENT))
+                .andExpect(jsonPath("$.message").value("Provided arguments are invalid, see data for details"))
+                .andExpect(jsonPath("$.data.name").value("Name is required"));
+    }
+
+    @Test
+    void testDeleteAWizardSuccess() throws Exception {
+        // Given
+        var wizardId = 1;
+
+        doNothing().when(this.wizardService)
+                .delete(wizardId);
+
+        // When - Then
+        this.mockMvc.perform(delete(BASE_URL + "/" + wizardId)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Delete success"));
+    }
+
+    @Test
+    void testDeleteWizardNotFound() throws Exception {
+        // Given
+        var wizardId = 1;
+
+        doThrow(new ObjectNotFoundException(Wizard.class.getSimpleName() ,wizardId))
+                .when(this.wizardService).delete(wizardId);
+
+        // When - Then
+        this.mockMvc.perform(delete(BASE_URL + "/" + wizardId)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(false))
+                .andExpect(jsonPath("$.code").value(StatusCode.NOT_FOUND))
+                .andExpect(jsonPath("$.message").value("Could not find Wizard with Id %d".formatted(wizardId)))
+                .andExpect(jsonPath("$.data").isEmpty());
     }
 
 }
