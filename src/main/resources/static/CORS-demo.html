@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cross-Origin Resource Sharing (CORS) Demo</title>
+</head>
+<body>
+<script>
+    fetch("http://localhost:8080/api/v1/users/login", {
+        method: "POST",
+        headers: {
+            Authorization: "Basic " + btoa("user1:password1"),
+        },
+    })
+        .then((response) => response.json())
+        .then((data) => console.log("Success: ", data))
+        .catch((error) => {
+            console.log(error);
+        });
+</script>
+</body>
+</html>
