@@ -1,5 +1,6 @@
 package edu.tcu.cs.hogwartsartifactsonline.artifact;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sun.net.httpserver.Authenticator;
 import edu.tcu.cs.hogwartsartifactsonline.artifact.converter.ArtifactDtoToArtifactConverter;
 import edu.tcu.cs.hogwartsartifactsonline.artifact.converter.ArtifactToArtifactDtoConverter;
@@ -64,5 +65,14 @@ public class ArtifactController {
     public Result deleteArtifact(@PathVariable String artifactId){
         this.artifactService.delete(artifactId);
         return new Result(true, StatusCode.SUCCESS, "Delete success");
+    }
+
+    @GetMapping("/summary")
+    public Result summarizeArtifacts() throws JsonProcessingException{
+        var foundArtifacts = this.artifactService.findAll();
+        var artifactsDtos = foundArtifacts.stream().map(artifactToArtifactDtoConverter::convert).toList();
+
+        String artifactsSummary = this.artifactService.summarize(artifactsDtos);
+        return new Result(true, StatusCode.SUCCESS, "Summarize success", artifactsSummary);
     }
 }

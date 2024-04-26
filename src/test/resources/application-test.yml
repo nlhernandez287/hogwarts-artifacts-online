@@ -20,5 +20,9 @@ api:
   endpoint:
     base-url: /api/v1
 
+ai:
+  endpoint: ${AI_OPENAI_ENDPOINT:https://api.openai.com/v1/chat/completions}
+  api-key: ${AI_OPENAI_API_KEY:YOUR_API_KEY}
+
 server:
   port: 8080
