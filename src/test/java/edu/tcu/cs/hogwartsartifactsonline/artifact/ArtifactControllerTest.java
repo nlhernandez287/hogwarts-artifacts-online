@@ -1,5 +1,6 @@
 package edu.tcu.cs.hogwartsartifactsonline.artifact;
 
+import edu.tcu.cs.hogwartsartifactsonline.ControllerTestConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.tcu.cs.hogwartsartifactsonline.artifact.dto.ArtifactDto;
 import edu.tcu.cs.hogwartsartifactsonline.system.StatusCode;
@@ -33,10 +34,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-class ArtifactControllerTest {
+
+class ArtifactControllerTest extends ControllerTestConfig{
 
     @Autowired
     MockMvc mockMvc;

@@ -1,6 +1,8 @@
 package edu.tcu.cs.hogwartsartifactsonline.wizard;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import edu.tcu.cs.hogwartsartifactsonline.ControllerTestConfig;
 import edu.tcu.cs.hogwartsartifactsonline.artifact.Artifact;
 import edu.tcu.cs.hogwartsartifactsonline.system.StatusCode;
 import edu.tcu.cs.hogwartsartifactsonline.system.exception.ObjectNotFoundException;
@@ -28,10 +30,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-class WizardControllerTest {
+class WizardControllerTest extends ControllerTestConfig{
 
     @Autowired
     MockMvc mockMvc;

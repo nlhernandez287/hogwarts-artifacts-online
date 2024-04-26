@@ -1,6 +1,6 @@
 package edu.tcu.cs.hogwartsartifactsonline.artifact;
 
-import edu.tcu.cs.hogwartsartifactsonline.IntegrationTest;
+import edu.tcu.cs.hogwartsartifactsonline.IntegrationTestConfig;
 import edu.tcu.cs.hogwartsartifactsonline.artifact.dto.ArtifactDto;
 import edu.tcu.cs.hogwartsartifactsonline.system.StatusCode;
 
@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 
-public class ArtifactControllerIntegrationTest extends IntegrationTest {
+public class ArtifactControllerIntegration extends IntegrationTestConfig {
 
     @Autowired
     MockMvc mockMvc;

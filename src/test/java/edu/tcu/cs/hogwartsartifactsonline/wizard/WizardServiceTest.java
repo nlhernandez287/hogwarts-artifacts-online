@@ -1,5 +1,6 @@
 package edu.tcu.cs.hogwartsartifactsonline.wizard;
 
+import edu.tcu.cs.hogwartsartifactsonline.ServiceTestConfig;
 import edu.tcu.cs.hogwartsartifactsonline.system.exception.ObjectNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-public class WizardServiceTest {
+public class WizardServiceTest extends ServiceTestConfig{
 
     @Mock
     WizardRepository wizardRepository;

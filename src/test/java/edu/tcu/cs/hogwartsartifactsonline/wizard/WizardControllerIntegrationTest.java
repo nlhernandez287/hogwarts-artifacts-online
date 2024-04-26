@@ -1,6 +1,6 @@
 package edu.tcu.cs.hogwartsartifactsonline.wizard;
 
-import edu.tcu.cs.hogwartsartifactsonline.IntegrationTest;
+import edu.tcu.cs.hogwartsartifactsonline.IntegrationTestConfig;
 import edu.tcu.cs.hogwartsartifactsonline.system.StatusCode;
 import edu.tcu.cs.hogwartsartifactsonline.wizard.dto.WizardDto;
 
@@ -22,7 +22,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-public class WizardControllerIntegrationTest extends IntegrationTest {
+public class WizardControllerIntegrationTest extends IntegrationTestConfig {
 
     @Autowired
     MockMvc mockMvc;

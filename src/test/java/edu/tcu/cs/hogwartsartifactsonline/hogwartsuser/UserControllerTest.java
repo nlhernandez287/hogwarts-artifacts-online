@@ -1,6 +1,7 @@
 package edu.tcu.cs.hogwartsartifactsonline.hogwartsuser;
 
 
+import edu.tcu.cs.hogwartsartifactsonline.ControllerTestConfig;
 import edu.tcu.cs.hogwartsartifactsonline.hogwartsuser.dto.UserDto;
 import edu.tcu.cs.hogwartsartifactsonline.hogwartsuser.dto.UserSaveDto;
 import edu.tcu.cs.hogwartsartifactsonline.system.StatusCode;
@@ -30,10 +31,7 @@ import java.util.List;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
-class UserControllerTest {
+class UserControllerTest extends ControllerTestConfig {
 
     @Autowired
     MockMvc mockMvc;
