@@ -39,7 +39,7 @@ public class DBDataInitializer implements CommandLineRunner {
         var a2 = generateArtifact("123452",
                 "Invisibility Cloak",
                 "An Invisibility Cloak was a magical " +
-                        "garment which rendered whomever or whatever it covered invisible",
+                        "garment which rendered whomever or whatever it covered invisible.",
                 "imageUrl");
         var a3 = generateArtifact("123453",
                 "Elder Wand",
