@@ -2,7 +2,6 @@ package edu.tcu.cs.hogwartsartifactsonline.security;
 
 import edu.tcu.cs.hogwartsartifactsonline.hogwartsuser.MyUserPrinciple;
 import edu.tcu.cs.hogwartsartifactsonline.hogwartsuser.converter.UserToUserDtoConverter;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 

@@ -2,15 +2,11 @@ package edu.tcu.cs.hogwartsartifactsonline.hogwartsuser;
 
 import edu.tcu.cs.hogwartsartifactsonline.ServiceTestConfig;
 import edu.tcu.cs.hogwartsartifactsonline.system.exception.ObjectNotFoundException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,9 +37,6 @@ class UserServiceTest extends ServiceTestConfig {
         );
     }
 
-    @AfterEach
-    void tearDown() {
-    }
 
     @Test
     void testSaveSuccess() {
