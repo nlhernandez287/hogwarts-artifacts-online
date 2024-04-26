@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -55,7 +56,7 @@ public class ArtifactController {
     @PutMapping("/{artifactId}")
     public Result updateArtifact(@PathVariable String artifactId, @Validated @RequestBody ArtifactDto artifactDto){
         Artifact update = this.artifactDtoToArtifactConverter.convert(artifactDto);
-        Artifact updatedArtifact = this.artifactService.update(artifactId, update);
+        Artifact updatedArtifact = this.artifactService.update(artifactId, Objects.requireNonNull(update));
         ArtifactDto updatedArtifactDto = this.artifactToArtifactDtoConverter.convert(updatedArtifact);
         return new Result(true, StatusCode.SUCCESS, "Update success", updatedArtifactDto);
     }

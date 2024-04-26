@@ -8,6 +8,7 @@ import edu.tcu.cs.hogwartsartifactsonline.wizard.dto.WizardDto;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +52,7 @@ public class WizardController {
 
     @PutMapping("/{wizardId}")
     public Result updateWizard(@PathVariable Integer wizardId, @Valid @RequestBody WizardDto update) {
-        var updatedWizard = this.wizardService.update(wizardId, wizardDtoToWizardConverter.convert(update));
+        var updatedWizard = this.wizardService.update(wizardId, Objects.requireNonNull(wizardDtoToWizardConverter.convert(update)));
         var updatedWizardDto = wizardToWizardDtoConverter.convert(updatedWizard);
         return new Result(true, StatusCode.SUCCESS, "Update success", updatedWizardDto);
     }
