@@ -12,6 +12,7 @@ import org.junit.jupiter.api.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
@@ -55,7 +56,7 @@ public class ArtifactControllerIntegration extends IntegrationTestConfig {
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Find all success"))
-                .andExpect(jsonPath("$.data", Matchers.hasSize(6)));
+                .andExpect(jsonPath("$.data.content", Matchers.hasSize(6)));
     }
 
     @Test
@@ -106,27 +107,31 @@ public class ArtifactControllerIntegration extends IntegrationTestConfig {
                 .andExpect(jsonPath("$.flag").value(true))
                 .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
                 .andExpect(jsonPath("$.message").value("Find all success"))
-                .andExpect(jsonPath("$.data", Matchers.hasSize(7)));
+                .andExpect(jsonPath("$.data.content", Matchers.hasSize(7)));
     }
 
+
     @Test
-    void testAddArtifactErrorWhenInvalidTokenIdProvided() throws Exception {
-        var artifactDto = new ArtifactDto(
-                null,
-                "Remembrall",
-                "A Remembral was a magical large marble-sized glass ball",
-                "imageUrl", null);
-
-        var artifactDtoJson = objectMapper.writeValueAsString(artifactDto);
-
-        // When - Then
-        this.mockMvc.perform(post(BASE_URL + "/artifacts").header("Authorization", this.token + "invalid")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(artifactDtoJson).accept(MediaType.APPLICATION_JSON))
+    @DisplayName("Check addArtifact with invalid input (POST)")
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void testAddArtifactErrorWithInvalidInput() throws Exception {
+        Artifact a = new Artifact();
+        a.setName(""); // Name is not provided.
+        a.setDescription(""); // Description is not provided.
+        a.setImageUrl(""); // ImageUrl is not provided.
+        String json = this.objectMapper.writeValueAsString(a);
+        this.mockMvc.perform(post(this.BASE_URL + "/artifacts").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
                 .andExpect(jsonPath("$.flag").value(false))
-                .andExpect(jsonPath("$.code").value(StatusCode.UNAUTHORIZED))
-                .andExpect(jsonPath("$.message").value("Access token provided is expired, revoked, malformed, or invalid for other reasons."))
-                .andExpect(jsonPath("$.data").value("An error occurred while attempting to decode the Jwt: Signed JWT rejected: Invalid signature"));
+                .andExpect(jsonPath("$.code").value(StatusCode.INVALID_ARGUMENT))
+                .andExpect(jsonPath("$.message").value("Provided arguments are invalid, see data for details."))
+                .andExpect(jsonPath("$.data.name").value("name is required."))
+                .andExpect(jsonPath("$.data.description").value("description is required."))
+                .andExpect(jsonPath("$.data.imageUrl").value("imageUrl is required."));
+        this.mockMvc.perform(get(this.BASE_URL + "/artifacts").accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Find All Success"))
+                .andExpect(jsonPath("$.data.content", Matchers.hasSize(6)));
     }
 
     @Test
