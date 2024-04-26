@@ -1,5 +1,6 @@
 package edu.tcu.cs.hogwartsartifactsonline.artifact;
 
+import edu.tcu.cs.hogwartsartifactsonline.ServiceTestConfig;
 import edu.tcu.cs.hogwartsartifactsonline.artifact.utils.IdWorker;
 import edu.tcu.cs.hogwartsartifactsonline.system.exception.ObjectNotFoundException;
 import edu.tcu.cs.hogwartsartifactsonline.wizard.Wizard;
@@ -22,8 +23,7 @@ import static edu.tcu.cs.hogwartsartifactsonline.artifact.ArtifactUtils.generate
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class ArtifactServiceTest {
+class ArtifactServiceTest extends ServiceTestConfig{
 
     @Mock
     ArtifactRepository artifactRepository;
