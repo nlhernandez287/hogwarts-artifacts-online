@@ -17,5 +17,5 @@ public class CorsConfiguration {
                 registry.addMapping("/**"); // Enable CORS for the whole application
             }
         };
-    };
+    }
 }

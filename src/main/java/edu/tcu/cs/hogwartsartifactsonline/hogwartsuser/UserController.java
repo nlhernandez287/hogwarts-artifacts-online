@@ -35,7 +35,7 @@ public class UserController {
     @PostMapping
     public Result saveUser(@Valid @RequestBody UserSaveDto userSaveDto) {
         var newUser = userSaveDtoToUserConverter.convert(userSaveDto);
-        var savedUser = this.userService.save(newUser);
+        var savedUser = this.userService.save(Objects.requireNonNull(newUser));
         var savedUserDto = userToUserDtoConverter.convert(savedUser);
         return new Result(true, StatusCode.SUCCESS, "Add success", savedUserDto);
     }
