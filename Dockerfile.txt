@@ -17,5 +17,3 @@ COPY --from=layer layer/snapshot-dependencies/ ./
 COPY --from=layer layer/application/ ./
 ENV spring.profiles.active=dev
 ENTRYPOINT ["java", "org.springframework.boot.loader.launch.JarLauncher"]
-
-EXPOSE 8080
