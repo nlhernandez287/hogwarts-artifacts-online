@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -74,5 +75,12 @@ public class ArtifactController {
 
         String artifactsSummary = this.artifactService.summarize(artifactsDtos);
         return new Result(true, StatusCode.SUCCESS, "Summarize success", artifactsSummary);
+    }
+
+    @PostMapping("/search")
+    public Result findArtifactsByCriteria(@RequestBody Map<String, String> searchCriteria, Pageable pageable) {
+        Page<Artifact> artifactPage = this.artifactService.findByCriteria(searchCriteria, pageable);
+        Page<ArtifactDto> artifactDtoPage = artifactPage.map(this.artifactToArtifactDtoConverter::convert);
+        return new Result(true, StatusCode.SUCCESS, "Search Success", artifactDtoPage);
     }
 }

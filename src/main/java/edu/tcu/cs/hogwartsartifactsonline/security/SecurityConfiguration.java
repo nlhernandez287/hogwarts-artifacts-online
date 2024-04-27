@@ -68,6 +68,7 @@ public class SecurityConfiguration {
                 //.csrf(csrf -> csrf.ignoringRequestMatchers(toH2Console()).disable()) // -> In case of csrf was not disable
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                         .requestMatchers(HttpMethod.GET, this.BASE_URL + "/artifacts/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, this.BASE_URL + "/artifacts/search").permitAll()
                         .requestMatchers(HttpMethod.GET, this.BASE_URL + "/users/**").hasAuthority("ROLE_admin")
                         .requestMatchers(HttpMethod.POST, this.BASE_URL + "/users").hasAuthority("ROLE_admin")
                         .requestMatchers(HttpMethod.PUT, this.BASE_URL + "/users/**").hasAuthority("ROLE_admin")

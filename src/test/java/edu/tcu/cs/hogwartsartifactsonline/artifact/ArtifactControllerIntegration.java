@@ -18,6 +18,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -228,6 +233,48 @@ public class ArtifactControllerIntegration extends IntegrationTestConfig {
                 .andExpect(jsonPath("$.message").value("Could not find %s with Id %s".formatted("Artifact", invalidId)))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
+
+    @Test
+    void testFindArtifactsByDescription() throws Exception {
+        // Given
+        Map<String, String> searchCriteria = new HashMap<>();
+        searchCriteria.put("description", "Hogwarts");
+        String json = this.objectMapper.writeValueAsString(searchCriteria);
+
+        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("page", "0");
+        requestParams.add("size", "2");
+        requestParams.add("sort", "name,asc");
+
+        // When and then
+        this.mockMvc.perform(post(this.BASE_URL + "/artifacts/search").contentType(MediaType.APPLICATION_JSON).content(json).params(requestParams).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Search Success"))
+                .andExpect(jsonPath("$.data.content", Matchers.hasSize(2)));
+    }
+
+    @Test
+    void testFindArtifactsByNameAndDescription() throws Exception {
+        // Given
+        Map<String, String> searchCriteria = new HashMap<>();
+        searchCriteria.put("name", "Sword");
+        searchCriteria.put("description", "Hogwarts");
+        String json = this.objectMapper.writeValueAsString(searchCriteria);
+
+        MultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("page", "0");
+        requestParams.add("size", "2");
+        requestParams.add("sort", "name,asc");
+
+        // When and then
+        this.mockMvc.perform(post(this.BASE_URL + "/artifacts/search").contentType(MediaType.APPLICATION_JSON).content(json).params(requestParams).accept(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.flag").value(true))
+                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
+                .andExpect(jsonPath("$.message").value("Search Success"))
+                .andExpect(jsonPath("$.data.content", Matchers.hasSize(1)));
+    }
+
 
     @Test
     void testDeleteArtifactByIdErrorWhenInvalidTokenIdProvided() throws Exception {
